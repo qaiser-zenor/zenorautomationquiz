@@ -182,8 +182,8 @@
             }
             resultContainer.innerHTML = '<div class="result-card"><div class="result-icon">' + icon + '</div><h2 class="result-title ' + titleClass + '">' + title + '</h2><p class="result-description">' + desc + '</p><div class="result-details">' + details + '</div><div class="cta-buttons">' + btns + '</div></div>';
         }
-        function bookAssessment() { window.location.href = 'https://calendly.com/your-link'; }
-        function getResources() { window.location.href = 'https://your-website.com/resources'; }
+        function bookAssessment() { window.location.href = 'https://calendly.com/qaiser-zenor-ai/discovery-session'; }
+        function getResources() { window.location.href = 'https://zenor-ai.lovable.app'; }
         function restart() { currentQuestion = 0; answers = []; totalScore = 0; quizContainer.classList.remove('hidden'); resultContainer.classList.add('hidden'); loadQuestion(); }
         nextBtn.addEventListener('click', () => { if (currentQuestion < questions.length - 1) { currentQuestion++; loadQuestion(); } else { showResults(); } });
         backBtn.addEventListener('click', () => { if (currentQuestion > 0) { currentQuestion--; loadQuestion(); } });
