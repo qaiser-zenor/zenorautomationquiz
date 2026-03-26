@@ -6,107 +6,579 @@
     <title>Automation Readiness Pre-Qualifier</title>
     <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --primary: #0A84FF; --primary-dark: #0066CC; --success: #32D74B;
-            --warning: #FF9F0A; --danger: #FF453A; --bg-dark: #000000;
-            --bg-card: #1C1C1E; --bg-elevated: #2C2C2E; --text-primary: #FFFFFF;
-            --text-secondary: #8E8E93; --border: #38383A;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        body { font-family: 'Epilogue', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-dark); color: var(--text-primary); line-height: 1.6; min-height: 100vh; position: relative; overflow-x: hidden; }
-        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 50%, rgba(10, 132, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(50, 215, 75, 0.05) 0%, transparent 50%), radial-gradient(circle at 40% 20%, rgba(255, 159, 10, 0.05) 0%, transparent 50%); pointer-events: none; z-index: 0; }
-        .container { max-width: 700px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 1; }
-        .header { text-align: center; margin-bottom: 50px; animation: fadeInDown 0.8s ease; }
-        .logo { font-size: 42px; margin-bottom: 16px; display: inline-block; animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-        .header h1 { font-size: 32px; font-weight: 700; margin-bottom: 12px; background: linear-gradient(135deg, var(--primary) 0%, var(--success) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .header p { color: var(--text-secondary); font-size: 18px; max-width: 500px; margin: 0 auto; }
-        .progress-container { margin-bottom: 40px; animation: fadeIn 0.6s ease 0.2s both; }
-        .progress-bar { width: 100%; height: 6px; background: var(--bg-elevated); border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--success)); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 10px; }
-        .progress-text { color: var(--text-secondary); font-size: 14px; font-family: 'JetBrains Mono', monospace; text-align: right; }
-        .question-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 40px; margin-bottom: 30px; animation: slideInUp 0.6s ease both; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
-        .question-number { color: var(--primary); font-size: 14px; font-weight: 600; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; margin-bottom: 16px; text-transform: uppercase; }
-        .question-text { font-size: 22px; font-weight: 600; margin-bottom: 30px; line-height: 1.4; }
-        .options { display: flex; flex-direction: column; gap: 12px; }
-        .option { background: var(--bg-elevated); border: 2px solid var(--border); border-radius: 12px; padding: 18px 24px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
-        .option::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(10, 132, 255, 0.1), transparent); transition: left 0.5s; }
-        .option:hover::before { left: 100%; }
-        .option:hover { border-color: var(--primary); transform: translateX(4px); box-shadow: 0 4px 20px rgba(10, 132, 255, 0.2); }
-        .option.selected { border-color: var(--primary); background: rgba(10, 132, 255, 0.15); }
-        .option-text { font-size: 16px; line-height: 1.5; }
-        .btn { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; padding: 18px 40px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: 'Epilogue', sans-serif; position: relative; overflow: hidden; }
-        .btn-container { display: flex; gap: 12px; align-items: center; }
-        .btn-back { background: var(--bg-elevated); border: 2px solid var(--border); color: var(--text-primary); flex: 0 0 auto; padding: 18px 32px; }
-        .btn-back:hover { border-color: var(--primary); background: var(--bg-elevated); box-shadow: 0 4px 20px rgba(10, 132, 255, 0.2); }
-        #next-btn { flex: 1; }
-        .btn::before { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.2); transform: translate(-50%, -50%); transition: width 0.6s, height 0.6s; }
-        .btn:hover::before { width: 300px; height: 300px; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(10, 132, 255, 0.4); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .btn:disabled:hover { box-shadow: none; }
-        .btn span { position: relative; z-index: 1; }
-        .result-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 50px 40px; text-align: center; animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
-        .result-icon { font-size: 80px; margin-bottom: 24px; animation: bounce 1s ease; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-        .result-title { font-size: 36px; font-weight: 700; margin-bottom: 16px; }
-        .result-title.qualified { background: linear-gradient(135deg, var(--success) 0%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .result-title.not-qualified { color: var(--warning); }
-        .result-description { font-size: 18px; color: var(--text-secondary); margin-bottom: 30px; line-height: 1.6; }
-        .result-details { background: var(--bg-elevated); border-radius: 12px; padding: 24px; margin-bottom: 30px; text-align: left; }
-        .detail-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
-        .detail-item:last-child { border-bottom: none; }
-        .detail-label { color: var(--text-secondary); font-size: 14px; }
-        .detail-value { font-weight: 600; font-family: 'JetBrains Mono', monospace; }
-        .cta-buttons { display: flex; flex-direction: column; gap: 12px; }
-        .btn-secondary { background: var(--bg-elevated); border: 2px solid var(--border); color: var(--text-primary); }
-        .btn-secondary:hover { border-color: var(--primary); background: var(--bg-elevated); box-shadow: 0 4px 20px rgba(10, 132, 255, 0.2); }
-        .hidden { display: none; }
-        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        @media (max-width: 768px) { .container { padding: 30px 16px; } .header h1 { font-size: 26px; } .header p { font-size: 16px; } .question-card { padding: 30px 24px; } .question-text { font-size: 20px; } .result-card { padding: 40px 24px; } .result-title { font-size: 28px; } }
+
+        :root {
+            --primary: #0A84FF;
+            --primary-dark: #0066CC;
+            --success: #32D74B;
+            --warning: #FF9F0A;
+            --danger: #FF453A;
+            --bg-dark: #000000;
+            --bg-card: #1C1C1E;
+            --bg-elevated: #2C2C2E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8E8E93;
+            --border: #38383A;
+        }
+
+        body {
+            font-family: 'Epilogue', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(10, 132, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(50, 215, 75, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 159, 10, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .logo {
+            font-size: 42px;
+            margin-bottom: 16px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--success) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 18px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .progress-container {
+            margin-bottom: 40px;
+            animation: fadeIn 0.6s ease 0.2s both;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: right;
+        }
+
+        .question-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            animation: slideInUp 0.6s ease both;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .question-number {
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 18px 24px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(10, 132, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .option:hover::before {
+            left: 100%;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+            box-shadow: 0 4px 20px rgba(10, 132, 255, 0.2);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(10, 132, 255, 0.15);
+        }
+
+        .option-text {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Epilogue', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-back {
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+            color: var(--text-primary);
+            flex: 0 0 auto;
+            padding: 18px 32px;
+        }
+
+        .btn-back:hover {
+            border-color: var(--primary);
+            background: var(--bg-elevated);
+            box-shadow: 0 4px 20px rgba(10, 132, 255, 0.2);
+        }
+
+        #next-btn {
+            flex: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(10, 132, 255, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn:disabled:hover {
+            box-shadow: none;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 50px 40px;
+            text-align: center;
+            animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .result-icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+            animation: bounce 1s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .result-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .result-title.qualified {
+            background: linear-gradient(135deg, var(--success) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .result-title.not-qualified {
+            color: var(--warning);
+        }
+
+        .result-description {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .result-details {
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            background: var(--bg-elevated);
+            box-shadow: 0 4px 20px rgba(10, 132, 255, 0.2);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 16px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .header p {
+                font-size: 16px;
+            }
+
+            .question-card {
+                padding: 30px 24px;
+            }
+
+            .question-text {
+                font-size: 20px;
+            }
+
+            .result-card {
+                padding: 40px 24px;
+            }
+
+            .result-title {
+                font-size: 28px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">&#9889;</div>
+            <div class="logo">⚡</div>
             <h1>Business Growth Check</h1>
             <p>Answer 10 questions to see if your business can grow faster by saving time on daily tasks</p>
         </div>
+
         <div id="quiz-container">
             <div class="progress-container">
-                <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
                 <div class="progress-text" id="progress-text">Question 1 of 10</div>
             </div>
+
             <div class="question-card" id="question-card">
                 <div class="question-number" id="question-number">Question 1</div>
                 <div class="question-text" id="question-text"></div>
                 <div class="options" id="options"></div>
             </div>
+
             <div class="btn-container" id="btn-container">
-                <button class="btn btn-back" id="back-btn" style="display: none;"><span>&#8592; Back</span></button>
-                <button class="btn" id="next-btn" disabled><span>Next Question &#8594;</span></button>
+                <button class="btn btn-back" id="back-btn" style="display: none;">
+                    <span>← Back</span>
+                </button>
+                <button class="btn" id="next-btn" disabled>
+                    <span>Next Question →</span>
+                </button>
             </div>
         </div>
+
         <div id="result-container" class="hidden"></div>
     </div>
+
     <script>
         const questions = [
-            { question: "What's your annual business revenue?", options: [{ text: "Under £100K", score: 0 }, { text: "£100K - £250K", score: 1 }, { text: "£250K - £500K", score: 2 }, { text: "£500K+", score: 3 }] },
-            { question: "How much time does your team spend on repetitive, manual tasks each week?", options: [{ text: "Less than 5 hours", score: 0 }, { text: "5-10 hours", score: 1 }, { text: "10-20 hours", score: 2 }, { text: "20+ hours", score: 3 }] },
-            { question: "Do you currently use any business tools or software?", options: [{ text: "No, mostly paper or spreadsheets", score: 2 }, { text: "Yes, 1-2 tools", score: 1 }, { text: "Yes, 3-5 tools", score: 2 }, { text: "Yes, 6+ tools", score: 3 }] },
-            { question: "How often do errors occur due to manual data entry or processing?", options: [{ text: "Never", score: 0 }, { text: "Rarely (a few times per year)", score: 1 }, { text: "Occasionally (monthly)", score: 2 }, { text: "Frequently (weekly or more)", score: 3 }] },
-            { question: "What's your average response time to customer inquiries?", options: [{ text: "Less than 1 hour", score: 0 }, { text: "Within 6 hours", score: 1 }, { text: "Within 24 hours", score: 2 }, { text: "1+ day or don't track", score: 3 }] },
-            { question: "How much would you invest to save time and grow your business each year?", options: [{ text: "Less than £2,000", score: 0 }, { text: "£2,000 - £6,000", score: 1 }, { text: "£6,000 - £10,000", score: 2 }, { text: "£10,000+", score: 3 }] },
-            { question: "Do you have written instructions for how things get done in your business?", options: [{ text: "No formal instructions", score: 0 }, { text: "Just basic notes", score: 1 }, { text: "Some things are written down", score: 2 }, { text: "Most things are documented", score: 3 }] },
-            { question: "How does your team feel about learning new tools?", options: [{ text: "Very resistant to change", score: 0 }, { text: "Somewhat hesitant", score: 1 }, { text: "Open to trying new things", score: 2 }, { text: "Excited about new tools", score: 3 }] },
-            { question: "What's your expected timeline for implementing improvements?", options: [{ text: "Within 2 months", score: 3 }, { text: "6-12 months", score: 2 }, { text: "12+ months", score: 1 }, { text: "No specific timeline yet", score: 0 }] },
-            { question: "Have you lost customers or opportunities due to long processes or being too busy?", options: [{ text: "No", score: 0 }, { text: "Possibly, but not certain", score: 1 }, { text: "Yes, occasionally", score: 2 }, { text: "Yes, frequently", score: 3 }] }
+            {
+                question: "What's your annual business revenue?",
+                options: [
+                    { text: "Under £100K", score: 0 },
+                    { text: "£100K - £250K", score: 1 },
+                    { text: "£250K - £500K", score: 2 },
+                    { text: "£500K+", score: 3 }
+                ]
+            },
+            {
+                question: "How much time does your team spend on repetitive, manual tasks each week?",
+                options: [
+                    { text: "Less than 5 hours", score: 0 },
+                    { text: "5-10 hours", score: 1 },
+                    { text: "10-20 hours", score: 2 },
+                    { text: "20+ hours", score: 3 }
+                ]
+            },
+            {
+                question: "Do you currently use any business tools or software?",
+                options: [
+                    { text: "No, mostly paper or spreadsheets", score: 2 },
+                    { text: "Yes, 1-2 tools", score: 1 },
+                    { text: "Yes, 3-5 tools", score: 2 },
+                    { text: "Yes, 6+ tools", score: 3 }
+                ]
+            },
+            {
+                question: "How often do errors occur due to manual data entry or processing?",
+                options: [
+                    { text: "Never", score: 0 },
+                    { text: "Rarely (a few times per year)", score: 1 },
+                    { text: "Occasionally (monthly)", score: 2 },
+                    { text: "Frequently (weekly or more)", score: 3 }
+                ]
+            },
+            {
+                question: "What's your average response time to customer inquiries?",
+                options: [
+                    { text: "Less than 1 hour", score: 0 },
+                    { text: "Within 6 hours", score: 1 },
+                    { text: "Within 24 hours", score: 2 },
+                    { text: "1+ day or don't track", score: 3 }
+                ]
+            },
+            {
+                question: "How much would you invest to save time and grow your business each year?",
+                options: [
+                    { text: "Less than £2,000", score: 0 },
+                    { text: "£2,000 - £6,000", score: 1 },
+                    { text: "£6,000 - £10,000", score: 2 },
+                    { text: "£10,000+", score: 3 }
+                ]
+            },
+            {
+                question: "Do you have written instructions for how things get done in your business?",
+                options: [
+                    { text: "No formal instructions", score: 0 },
+                    { text: "Just basic notes", score: 1 },
+                    { text: "Some things are written down", score: 2 },
+                    { text: "Most things are documented", score: 3 }
+                ]
+            },
+            {
+                question: "How does your team feel about learning new tools?",
+                options: [
+                    { text: "Very resistant to change", score: 0 },
+                    { text: "Somewhat hesitant", score: 1 },
+                    { text: "Open to trying new things", score: 2 },
+                    { text: "Excited about new tools", score: 3 }
+                ]
+            },
+            {
+                question: "What's your expected timeline for implementing improvements?",
+                options: [
+                    { text: "Within 2 months", score: 3 },
+                    { text: "6-12 months", score: 2 },
+                    { text: "12+ months", score: 1 },
+                    { text: "No specific timeline yet", score: 0 }
+                ]
+            },
+            {
+                question: "Have you lost customers or opportunities due to long processes or being too busy?",
+                options: [
+                    { text: "No", score: 0 },
+                    { text: "Possibly, but not certain", score: 1 },
+                    { text: "Yes, occasionally", score: 2 },
+                    { text: "Yes, frequently", score: 3 }
+                ]
+            }
         ];
-        let currentQuestion = 0, answers = [], totalScore = 0;
+
+        let currentQuestion = 0;
+        let answers = [];
+        let totalScore = 0;
+
         const questionCard = document.getElementById('question-card');
         const questionNumber = document.getElementById('question-number');
         const questionText = document.getElementById('question-text');
@@ -117,76 +589,277 @@
         const progressText = document.getElementById('progress-text');
         const quizContainer = document.getElementById('quiz-container');
         const resultContainer = document.getElementById('result-container');
+
         function loadQuestion() {
             const q = questions[currentQuestion];
-            questionNumber.textContent = 'Question ' + (currentQuestion + 1);
+            
+            questionNumber.textContent = `Question ${currentQuestion + 1}`;
             questionText.textContent = q.question;
+            
             optionsContainer.innerHTML = '';
+            
             q.options.forEach((option, index) => {
                 const optionDiv = document.createElement('div');
                 optionDiv.className = 'option';
-                if (answers[currentQuestion] === index) optionDiv.classList.add('selected');
-                optionDiv.innerHTML = '<div class="option-text">' + option.text + '</div>';
+                
+                // Pre-select if this question was already answered
+                if (answers[currentQuestion] === index) {
+                    optionDiv.classList.add('selected');
+                }
+                
+                optionDiv.innerHTML = `<div class="option-text">${option.text}</div>`;
+                
                 optionDiv.addEventListener('click', () => selectOption(index));
+                
                 optionsContainer.appendChild(optionDiv);
             });
+
             updateProgress();
-            backBtn.style.display = currentQuestion === 0 ? 'none' : 'block';
-            nextBtn.disabled = answers[currentQuestion] === undefined;
+            
+            // Show/hide back button
+            if (currentQuestion === 0) {
+                backBtn.style.display = 'none';
+            } else {
+                backBtn.style.display = 'block';
+            }
+            
+            // Enable next button if question was already answered
+            if (answers[currentQuestion] !== undefined) {
+                nextBtn.disabled = false;
+            } else {
+                nextBtn.disabled = true;
+            }
+
+            // Trigger animation
             questionCard.style.animation = 'none';
-            setTimeout(() => { questionCard.style.animation = 'slideInUp 0.6s ease both'; }, 10);
+            setTimeout(() => {
+                questionCard.style.animation = 'slideInUp 0.6s ease both';
+            }, 10);
         }
+
         function selectOption(index) {
-            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
-            document.querySelectorAll('.option')[index].classList.add('selected');
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[index].classList.add('selected');
+            
             answers[currentQuestion] = index;
             nextBtn.disabled = false;
         }
+
         function updateProgress() {
             const progress = ((currentQuestion + 1) / questions.length) * 100;
-            progressFill.style.width = progress + '%';
-            progressText.textContent = 'Question ' + (currentQuestion + 1) + ' of ' + questions.length;
+            progressFill.style.width = `${progress}%`;
+            progressText.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
         }
+
         function calculateScore() {
             totalScore = 0;
-            answers.forEach((answerIndex, questionIndex) => { totalScore += questions[questionIndex].options[answerIndex].score; });
+            answers.forEach((answerIndex, questionIndex) => {
+                totalScore += questions[questionIndex].options[answerIndex].score;
+            });
             return totalScore;
         }
+
         function showResults() {
             const score = calculateScore();
             const maxScore = questions.length * 3;
             const percentage = Math.round((score / maxScore) * 100);
+            
             quizContainer.classList.add('hidden');
             resultContainer.classList.remove('hidden');
-            let icon, title, titleClass, desc, details, btns;
+
+            // 4-tier qualification system
             if (score >= 25) {
-                icon = '🚀'; title = 'Perfect Timing!'; titleClass = 'qualified';
-                desc = 'Your business is ready for growth. Based on your responses, we can help you save significant time and scale faster.';
-                details = '<div class="detail-item"><span class="detail-label">Your Score</span><span class="detail-value" style="color: var(--success);">' + score + '/' + maxScore + ' (' + percentage + '%)</span></div><div class="detail-item"><span class="detail-label">Status</span><span class="detail-value" style="color: var(--success);">Strong Match ✓</span></div><div class="detail-item"><span class="detail-label">Next Step</span><span class="detail-value">Free Business Review</span></div>';
-                btns = '<button class="btn" onclick="bookAssessment()"><span>Book Your Free Business Review →</span></button><button class="btn btn-secondary" onclick="restart()"><span>Start Over</span></button>';
+                // Tier 1: Strong Qualified Lead (25-30 points, 83%+)
+                resultContainer.innerHTML = `
+                    <div class="result-card">
+                        <div class="result-icon">🚀</div>
+                        <h2 class="result-title qualified">Perfect Timing!</h2>
+                        <p class="result-description">
+                            Your business is ready for growth. Based on your responses, 
+                            we can help you save significant time and scale faster. Let's discuss 
+                            what's possible for your business.
+                        </p>
+                        <div class="result-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Your Score</span>
+                                <span class="detail-value" style="color: var(--success);">${score}/${maxScore} (${percentage}%)</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Status</span>
+                                <span class="detail-value" style="color: var(--success);">Strong Match ✓</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Next Step</span>
+                                <span class="detail-value">Free Business Review</span>
+                            </div>
+                        </div>
+                        <div class="cta-buttons">
+                            <button class="btn" onclick="bookAssessment()">
+                                <span>Book Your Free Business Review →</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="restart()">
+                                <span>Start Over</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
             } else if (score >= 16) {
-                icon = '🎯'; title = 'Great Fit!'; titleClass = 'qualified';
-                desc = 'Your business has solid potential for improvement. We can help you save time, set up better tools, or streamline how things get done.';
-                details = '<div class="detail-item"><span class="detail-label">Your Score</span><span class="detail-value" style="color: var(--primary);">' + score + '/' + maxScore + ' (' + percentage + '%)</span></div><div class="detail-item"><span class="detail-label">Status</span><span class="detail-value" style="color: var(--primary);">Good Match ✓</span></div><div class="detail-item"><span class="detail-label">Next Step</span><span class="detail-value">Free Consultation</span></div>';
-                btns = '<button class="btn" onclick="bookAssessment()"><span>Book Your Free Business Review →</span></button><button class="btn btn-secondary" onclick="restart()"><span>Start Over</span></button>';
+                // Tier 2: Qualified - Needs Discovery (16-24 points, 53-80%)
+                resultContainer.innerHTML = `
+                    <div class="result-card">
+                        <div class="result-icon">🎯</div>
+                        <h2 class="result-title qualified">Great Fit!</h2>
+                        <p class="result-description">
+                            Your business has solid potential for improvement. We can help you save time, 
+                            set up better tools, or streamline how things get done. Let's explore which 
+                            solutions would help you most.
+                        </p>
+                        <div class="result-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Your Score</span>
+                                <span class="detail-value" style="color: var(--primary);">${score}/${maxScore} (${percentage}%)</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Status</span>
+                                <span class="detail-value" style="color: var(--primary);">Good Match ✓</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Next Step</span>
+                                <span class="detail-value">Free Consultation</span>
+                            </div>
+                        </div>
+                        <div class="cta-buttons">
+                            <button class="btn" onclick="bookAssessment()">
+                                <span>Book Your Free Business Review →</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="restart()">
+                                <span>Start Over</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
             } else if (score >= 9) {
-                icon = '🌱'; title = 'We Can Help You Get Started'; titleClass = 'not-qualified';
-                desc = 'Your business is in the early stages, and that's perfectly fine! We help businesses like yours get organized and build a strong foundation.';
-                details = '<div class="detail-item"><span class="detail-label">Your Score</span><span class="detail-value" style="color: var(--warning);">' + score + '/' + maxScore + ' (' + percentage + '%)</span></div><div class="detail-item"><span class="detail-label">Status</span><span class="detail-value" style="color: var(--warning);">Getting Started</span></div><div class="detail-item"><span class="detail-label">Focus</span><span class="detail-value">Building Foundation</span></div>';
-                btns = '<button class="btn" onclick="bookAssessment()"><span>Book Your Free Business Review →</span></button><button class="btn btn-secondary" onclick="getResources()"><span>Get Free Resources</span></button>';
+                // Tier 3: Early Stage - We Can Help Get Started (9-15 points, 30-50%)
+                resultContainer.innerHTML = `
+                    <div class="result-card">
+                        <div class="result-icon">🌱</div>
+                        <h2 class="result-title not-qualified">We Can Help You Get Started</h2>
+                        <p class="result-description">
+                            Your business is in the early stages, and that's perfectly fine! We help 
+                            businesses like yours get organized, set up the right tools, and build a 
+                            strong foundation to grow from.
+                        </p>
+                        <div class="result-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Your Score</span>
+                                <span class="detail-value" style="color: var(--warning);">${score}/${maxScore} (${percentage}%)</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Status</span>
+                                <span class="detail-value" style="color: var(--warning);">Getting Started</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Focus</span>
+                                <span class="detail-value">Building Foundation</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Best For You</span>
+                                <span class="detail-value">Setup & Organization</span>
+                            </div>
+                        </div>
+                        <div class="cta-buttons">
+                            <button class="btn" onclick="bookAssessment()">
+                                <span>Book Your Free Business Review →</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="getResources()">
+                                <span>Get Free Resources</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
             } else {
-                icon = '💡'; title = "Let's Stay Connected"; titleClass = 'not-qualified';
-                desc = "You're just getting started with your business journey, and that's great! We'd love to stay in touch and share helpful resources as you grow.";
-                details = '<div class="detail-item"><span class="detail-label">Your Score</span><span class="detail-value" style="color: var(--text-secondary);">' + score + '/' + maxScore + ' (' + percentage + '%)</span></div><div class="detail-item"><span class="detail-label">Status</span><span class="detail-value" style="color: var(--text-secondary);">Early Journey</span></div><div class="detail-item"><span class="detail-label">Focus</span><span class="detail-value">Learn & Grow</span></div>';
-                btns = '<button class="btn" onclick="getResources()"><span>Get Free Resources →</span></button><button class="btn btn-secondary" onclick="restart()"><span>Start Over</span></button>';
+                // Tier 4: Very Early Stage - Nurture (0-8 points, <30%)
+                resultContainer.innerHTML = `
+                    <div class="result-card">
+                        <div class="result-icon">💡</div>
+                        <h2 class="result-title not-qualified">Let's Stay Connected</h2>
+                        <p class="result-description">
+                            You're just getting started with your business journey, and that's great! 
+                            We'd love to stay in touch and share helpful resources as you grow. 
+                            When the time is right, we'll be here to help.
+                        </p>
+                        <div class="result-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Your Score</span>
+                                <span class="detail-value" style="color: var(--text-secondary);">${score}/${maxScore} (${percentage}%)</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Status</span>
+                                <span class="detail-value" style="color: var(--text-secondary);">Early Journey</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Focus</span>
+                                <span class="detail-value">Learn & Grow</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Next Step</span>
+                                <span class="detail-value">Free Resources</span>
+                            </div>
+                        </div>
+                        <div class="cta-buttons">
+                            <button class="btn" onclick="getResources()">
+                                <span>Get Free Resources →</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="restart()">
+                                <span>Start Over</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
             }
-            resultContainer.innerHTML = '<div class="result-card"><div class="result-icon">' + icon + '</div><h2 class="result-title ' + titleClass + '">' + title + '</h2><p class="result-description">' + desc + '</p><div class="result-details">' + details + '</div><div class="cta-buttons">' + btns + '</div></div>';
         }
-        function bookAssessment() { window.location.href = 'https://calendly.com/qaiser-zenor-ai/discovery-session'; }
-        function getResources() { window.location.href = 'https://zenor-ai.lovable.app'; }
-        function restart() { currentQuestion = 0; answers = []; totalScore = 0; quizContainer.classList.remove('hidden'); resultContainer.classList.add('hidden'); loadQuestion(); }
-        nextBtn.addEventListener('click', () => { if (currentQuestion < questions.length - 1) { currentQuestion++; loadQuestion(); } else { showResults(); } });
-        backBtn.addEventListener('click', () => { if (currentQuestion > 0) { currentQuestion--; loadQuestion(); } });
+
+        function bookAssessment() {
+            // Replace this URL with your calendar booking link
+            window.location.href = 'https://calendly.com/qaiser-zenor-ai/discovery-session';
+            // Or open in new tab: window.open('https://calendly.com/qaiser-zenor-ai/discovery-session', '_blank');
+        }
+
+        function getResources() {
+            // Replace this URL with your resources page
+            window.location.href = 'https://zenor-ai.lovable.app';
+            // Or open in new tab: window.open('https://zenor-ai.lovable.app', '_blank');
+        }
+
+        function restart() {
+            currentQuestion = 0;
+            answers = [];
+            totalScore = 0;
+            
+            quizContainer.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+            
+            loadQuestion();
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        });
+
+        backBtn.addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion();
+            }
+        });
+
+        // Initialize
         loadQuestion();
     </script>
 </body>
